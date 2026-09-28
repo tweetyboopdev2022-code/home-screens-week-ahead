@@ -1,0 +1,73 @@
+{
+  "id": "week-ahead",
+  "name": "Week Ahead",
+  "version": "1.0.0",
+  "description": "The coming week at a glance for Sunday planning: each day's weather, everyone's events colour-coded by person, the school cycle day and the dinner planned.",
+  "author": "Tanya",
+  "license": "MIT",
+  "minAppVersion": "1.7.1",
+  "moduleType": "week-ahead",
+  "category": "Family",
+  "icon": "CalendarDays",
+  "defaultConfig": {
+    "slot": "dinner",
+    "startSundayHour": 12,
+    "hideTitles": "^Day \\d|lunch|d[îi]ner",
+    "accentColor": "#b45309"
+  },
+  "defaultSize": {
+    "w": 1000,
+    "h": 1300
+  },
+  "defaultStyle": {
+    "fontSize": 18,
+    "padding": 28,
+    "borderRadius": 28
+  },
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "slot": {
+        "type": "string",
+        "title": "Meal slot",
+        "ui:widget": "text",
+        "ui:group": "Content",
+        "description": "dinner, lunch or breakfast"
+      },
+      "startSundayHour": {
+        "type": "number",
+        "title": "On Sundays, show next week from (hour)",
+        "ui:widget": "slider",
+        "ui:group": "Content",
+        "minimum": 0,
+        "maximum": 23,
+        "ui:step": 1
+      },
+      "hideTitles": {
+        "type": "string",
+        "title": "Hide events matching",
+        "ui:widget": "text",
+        "ui:group": "Content",
+        "description": "Regex; school 'Day N' and lunch events are shown as badges instead"
+      },
+      "accentColor": {
+        "type": "string",
+        "title": "Accent colour",
+        "ui:widget": "color",
+        "ui:group": "Look"
+      }
+    }
+  },
+  "exports": {
+    "component": "default"
+  },
+  "dataRequirements": [
+    "calendar",
+    "weather",
+    "location"
+  ],
+  "prefetchUrl": null,
+  "permissions": [
+    "storage"
+  ]
+}
