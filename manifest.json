@@ -1,7 +1,7 @@
 {
   "id": "week-ahead",
   "name": "Week Ahead",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "The coming week at a glance for Sunday planning: each day's weather, everyone's events colour-coded by person, the school cycle day and the dinner planned.",
   "author": "Tanya",
   "license": "MIT",
@@ -13,7 +13,8 @@
     "slot": "dinner",
     "startSundayHour": 12,
     "hideTitles": "^Day \\d|lunch|d[îi]ner",
-    "accentColor": "#b45309"
+    "accentColor": "#b45309",
+    "showBedtime": true
   },
   "defaultSize": {
     "w": 1000,
@@ -55,6 +56,12 @@
         "title": "Accent colour",
         "ui:widget": "color",
         "ui:group": "Look"
+      },
+      "showBedtime": {
+        "type": "boolean",
+        "title": "Show whose bedtime turn it is",
+        "ui:widget": "toggle",
+        "ui:group": "Content"
       }
     }
   },

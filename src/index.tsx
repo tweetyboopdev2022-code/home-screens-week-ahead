@@ -1,6 +1,8 @@
 import React from 'react';
 import type { PluginComponentProps } from './hs-plugin';
 import { frame, ink, caps, Icon, wxIcon, sdk, useNow, dayKey, localHM, fmtTime } from './ui';
+import { parseRotation, whoOn } from './rotation';
+import { useRotationSettings } from './store';
 
 type Ev = { id: string; title: string; start: string; end?: string; allDay: boolean; sourceId?: string; calendarColor?: string; location?: string };
 type Person = { name: string; sourceIds?: string[] };
@@ -38,6 +40,15 @@ export default function WeekAhead(props: PluginComponentProps & { events?: Ev[];
   const imperial = props.units === 'imperial';
   const deg = (c: number) => `${Math.round(imperial ? c * 9 / 5 + 32 : c)}°`;
   const planned = days.filter((d) => mealFor(d)).length;
+  // Whose turn it is for bedtime (from the Bedtime Turn plugin, if it's installed)
+  const bedSettings = useRotationSettings(300000);
+  const rot = parseRotation(bedSettings);
+  const showBed = config.showBedtime !== false && !!rot;
+  const lightText = (() => { const h = String(style?.textColor || '').replace('#', ''); if (h.length < 6) return false; const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); return 0.299 * r + 0.587 * g + 0.114 * b > 150; })();
+  const bedColor = (p: string) => {
+    const m = String(bedSettings?.colors ?? '').split(',').map((x) => x.split(':').map((y) => y.trim())).find(([n]) => n?.toLowerCase() === p.toLowerCase());
+    const c = m?.[1] || accent; return lightText ? `color-mix(in srgb, ${c} 55%, white)` : c;
+  };
   const label = (d: string) => new Intl.DateTimeFormat(undefined, { weekday: 'short', timeZone: 'UTC' }).format(new Date(d + 'T12:00:00Z'));
   const num = (d: string) => Number(d.slice(8));
   const monthOf = new Intl.DateTimeFormat(undefined, { month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(start + 'T12:00:00Z'));
@@ -63,6 +74,9 @@ export default function WeekAhead(props: PluginComponentProps & { events?: Ev[];
                 <div style={{ fontSize: '1.7em', fontWeight: 300 }}>{num(d)}</div>
                 {badges[0] && !noSchool && <div style={{ fontSize: '0.55em', fontWeight: 600, color: '#db2777' }}>DAY {badges[0]}</div>}
                 {noSchool && <div style={{ fontSize: '0.55em', fontWeight: 600, color: '#d97706' }}>NO SCHOOL</div>}
+                {showBed && rot && (() => { const b = whoOn(rot, d); return (
+                  <div title="Bedtime" style={{ fontSize: '0.55em', fontWeight: 600, color: bedColor(b.person), whiteSpace: 'nowrap', marginTop: '0.15em' }}>☾ {b.person.toUpperCase()}{b.swapped ? '*' : ''}</div>
+                ); })()}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.3em', fontSize: '0.8em' }}>
                 {f ? (<><Icon d={wxIcon(f.icon || f.description || '')} size="1.6em" stroke={1.6} /><div style={{ lineHeight: 1.15 }}><div style={{ fontWeight: 600 }}>{deg(f.high)}</div><div style={{ opacity: 0.5 }}>{deg(f.low)}</div></div></>) : <span style={{ opacity: 0.25 }}>—</span>}
